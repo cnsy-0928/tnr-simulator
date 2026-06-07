@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>毛毛族群管理小島｜流浪犬貓模擬器</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="floating-paws" aria-hidden="true">🐾 🐕 🐈 🐾 🦉 🦎</div>
+  <header class="hero">
+    <div class="hero__text">
+      <p class="eyebrow">互動式科普模擬遊戲</p>
+      <h1>毛毛族群管理小島</h1>
+      <p class="subtitle">調整 TNR、餵食、飼主責任、收容量能與安樂死政策，看看 20 年後戶外犬貓、收容壓力與野生動物會發生什麼變化。</p>
+      <div class="hero__actions">
+        <a href="#game" class="button primary">開始經營小島</a>
+        <button class="button ghost" id="loadExample">載入常見情境</button>
+      </div>
+    </div>
+    <div class="hero__mascot" aria-label="遊戲吉祥物">
+      <div class="sun">☀️</div>
+      <div class="animal-row"><span>🐕</span><span>🐈</span><span>🦜</span></div>
+      <div class="mission-card">
+        <b>你的任務</b>
+        <p>讓戶外犬貓數量下降，同時避免收容爆量與野生動物壓力升高。</p>
+      </div>
+    </div>
+  </header>
+
+  <main id="game" class="layout">
+    <section class="panel controls">
+      <div class="section-title"><span>🌿</span><h2>1. 選擇模擬地區</h2></div>
+      <div class="cards" id="areaCards"></div>
+
+      <div class="section-title"><span>🛠️</span><h2>2. 設定政策工具</h2></div>
+
+      <label class="control">
+        <span>TNR 抓紮覆蓋率 <b id="tnrValue">45%</b></span>
+        <input id="tnr" type="range" min="0" max="95" value="45" />
+        <small>每年成功捕捉、絕育並回置的比例。覆蓋率越高，未絕育個體越少。</small>
+      </label>
+
+      <label class="control">
+        <span>飼主責任強度 <b id="ownerValue">普通</b></span>
+        <input id="owner" type="range" min="0" max="3" value="1" step="1" />
+        <small>影響棄養、走失、未絕育家犬貓流入戶外族群的程度。</small>
+      </label>
+
+      <label class="control">
+        <span>餵食狀況 <b id="feedingValue">固定餵食</b></span>
+        <input id="feeding" type="range" min="0" max="3" value="2" step="1" />
+        <small>餵食會提高存活率與環境可容納數量，也可能增加聚集與野生動物壓力。</small>
+      </label>
+
+      <label class="control">
+        <span>收容所量能 <b id="shelterValue">普通</b></span>
+        <input id="shelter" type="range" min="0" max="3" value="1" step="1" />
+        <small>代表每年能從戶外移入收容、認養媒合或長期安置系統的比例。</small>
+      </label>
+
+      <label class="control">
+        <span>安樂死政策 <b id="euthValue">完全不執行</b></span>
+        <input id="euth" type="range" min="0" max="3" value="0" step="1" />
+        <small>與收容分開計算：可設定為不執行、僅特殊情況、中度或高強度執行。</small>
+      </label>
+
+      <label class="control">
+        <span>模擬年數 <b id="yearsValue">20 年</b></span>
+        <input id="years" type="range" min="5" max="30" value="20" step="1" />
+      </label>
+
+      <div class="buttons">
+        <button class="button primary" id="simulate">✨ 執行模擬</button>
+        <button class="button ghost" id="reset">重設</button>
+      </div>
+    </section>
+
+    <section class="panel results">
+      <div class="section-title"><span>📊</span><h2>3. 模擬結果</h2></div>
+      <div class="summary-grid">
+        <div class="metric"><span>第 0 年</span><b id="initialPop">300</b><small>初始戶外犬貓</small></div>
+        <div class="metric"><span>最後一年</span><b id="finalPop">-</b><small>戶外犬貓數量</small></div>
+        <div class="metric"><span>族群變化</span><b id="changeRate">-</b><small>相較於第 0 年</small></div>
+        <div class="metric"><span>收容壓力</span><b id="shelterLoad">-</b><small>最高容量使用率</small></div>
+      </div>
+
+      <div class="verdict" id="verdict">請設定政策後按「執行模擬」。</div>
+      <div class="badge-row" id="badges"></div>
+      <div class="chartbox"><canvas id="populationChart"></canvas></div>
+
+      <h3>政策診斷</h3>
+      <div id="diagnosis" class="diagnosis"></div>
+
+      <details class="source-note">
+        <summary>模型來源與限制</summary>
+        <p>本模擬器是教育用簡化模型，參考 Andersen et al. (2004) 的高繁殖矩陣模型概念，以及 Schmidt et al. (2009) 對開放族群、移入、環境承載量與 TNR／安樂死組合策略的模擬概念。結果不代表任何特定縣市的實際數字。</p>
+        <p>重點不是預測精準數量，而是讓使用者看見：低覆蓋率 TNR、持續餵食、棄養／移入、收容不足等因素如何共同影響族群趨勢。</p>
+      </details>
+    </section>
+  </main>
+
+  <section class="panel guide">
+    <div class="section-title"><span>📚</span><h2>給使用者看的簡易說明</h2></div>
+    <div class="guide-grid">
+      <div><h3>🏘️ 現實模式</h3><p>每年仍有棄養、走失或外地移入，因此族群可能被新個體補上。</p></div>
+      <div><h3>🍱 環境可容納數量 K</h3><p>食物、人工庇護與餵食點越多，一個地方能支持的戶外犬貓通常越多。</p></div>
+      <div><h3>✂️ TNR 不是餵食</h3><p>TNR 的核心是捕捉、絕育、回置與後續監測。餵食若沒有管理，可能提高存活與聚集。</p></div>
+      <div><h3>🧩 單一政策通常不夠</h3><p>族群下降通常需要高覆蓋率絕育、降低棄養、收容認養與餵食管理共同作用。</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>🐾 教育展示用模擬器｜可自行修改參數與文字</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
